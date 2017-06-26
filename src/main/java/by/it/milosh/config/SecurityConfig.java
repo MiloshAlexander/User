@@ -1,5 +1,6 @@
 package by.it.milosh.config;
 
+import by.it.milosh.service.AuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity  // cancel all basic security settings
 public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
+    @Autowired
+    private AuthenticationService authService;
 
     /**
      * Password stored in cookie.
@@ -30,13 +33,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter{
     }
 
     /**
+     * To work with database.
+     */
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(authService);
+    }
+
+    /**
      * Custom settings for username and password (redefine spring boot basic settings).
      * This is basic HTTP authentication. (Username and password get in each request ).
      * Password is passed in "Request headers", which is could decoder through Base64.getDecoder().decode(auth).
-     */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication().withUser("user").password("user").roles("USER");
     }
+     */
 
 }
